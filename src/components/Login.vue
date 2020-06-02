@@ -3,6 +3,16 @@
     <div class="login_box">
       <div class="avator_box">
         <img src="../assets/logo.png" alt="">
+        <el-form ref="form" :model="form" label-width="80px">
+          <el-form-item :model="loginForm">
+            <el-input v-model="loginForm.username"></el-input>
+          </el-form-item>
+          <el-form-item >
+            <el-input v-model="loginForm.password" type="password"></el-input>
+          </el-form-item>
+        </el-form>
+        <el-button type="primary">主要按钮</el-button>
+        <el-button type="info" plain>信息按钮</el-button>
       </div>
 
     </div>
@@ -11,6 +21,14 @@
 
 <script>
 export default {
+  data () {
+    return {
+      loginForm: {
+        username: '',
+        password: ''
+      }
+    }
+  }
 }
 </script>
 
