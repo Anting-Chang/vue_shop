@@ -3,18 +3,19 @@
     <div class="login_box">
       <div class="avator_box">
         <img src="../assets/logo.png" alt="">
-        <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item :model="loginForm">
-            <el-input v-model="loginForm.username"></el-input>
-          </el-form-item>
-          <el-form-item >
-            <el-input v-model="loginForm.password" type="password"></el-input>
-          </el-form-item>
-        </el-form>
-        <el-button type="primary">主要按钮</el-button>
-        <el-button type="info" plain>信息按钮</el-button>
       </div>
-
+      <el-form ref="form" :model="loginForm" :rules="loginRules" class="login_form">
+        <el-form-item prop="username">
+          <el-input v-model="loginForm.username" prefix-icon="el-icon-user"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.password" prefix-icon="el-icon-check" type="password"></el-input>
+        </el-form-item>
+        <el-form-item class="btns">
+          <el-button type="primary">登录</el-button>
+          <el-button type="info" plain>重置</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -26,6 +27,14 @@ export default {
       loginForm: {
         username: '',
         password: ''
+      },
+      loginRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }]
       }
     }
   }
@@ -63,5 +72,16 @@ export default {
         border-radius: 50%;
       }
     }
+  }
+  .login_form {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  .btns {
+    display: flex;
+    justify-content: flex-end;
   }
 </style>
