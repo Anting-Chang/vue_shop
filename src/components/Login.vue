@@ -25,8 +25,8 @@ export default {
   data () {
     return {
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       loginRules: {
         username: [
@@ -46,8 +46,13 @@ export default {
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post('login', this.loginForm)
-        if (res.meta.status !== 200) return console.log('登陆失败')
+        if (res.meta.status !== 200) return this.$message.error('登陆失败')
+        this.$message.success('登陆成功')
         console.log(res)
+        // put token into session Storage
+        window.sessionStorage.setItem('token', res.data.token)
+        // jump to home page
+        this.$router.push('/home')
       })
     }
   }
