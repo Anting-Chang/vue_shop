@@ -52,7 +52,7 @@ export default {
         // put token into session Storage
         window.sessionStorage.setItem('token', res.data.token)
         // jump to home page
-        this.$router.push('/calc')
+        this.$router.push('/home')
       })
     }
   }
