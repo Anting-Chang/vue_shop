@@ -45,20 +45,19 @@ export default {
     login () {
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return
-        const { data: res } = await this.$http.post('login', this.loginForm)
-        if (res.meta.status !== 200) return this.$message.error('登陆失败')
+        const result = await this.$http.post('login', this.loginForm)
+        if (result.data.meta.status !== 200) {
+          return this.$message.error('登陆失败！')
+        }
+        console.log(result)
         this.$message.success('登陆成功')
-        console.log(res)
-        // put token into session Storage
-        window.sessionStorage.setItem('token', res.data.token)
-        // jump to home page
+        window.sessionStorage.setItem('token', result.data.data.token)
         this.$router.push('/home')
       })
     }
   }
 }
 </script>
-
 <style lang="less" scoped>
   .login_container {
     background-color: #2b4b6b;
