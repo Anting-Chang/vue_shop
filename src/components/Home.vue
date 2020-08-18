@@ -14,11 +14,13 @@
       <!-- left side nav -->
       <el-aside width="200px">
           <el-menu
+            router
+            unique-opened
             default-active="2"
             class="el-menu-vertical-demo"
             background-color="#333744"
             text-color="#fff"
-            active-text-color="#ffd04b">
+            active-text-color="#409BFF">
             <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
               <template slot="title">
                 <i :class="iconsObj[item.id]"></i>
@@ -35,7 +37,9 @@
       </el-aside>
       <!-- left side nav -->
       <!-- right main content -->
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
       <!-- right main content -->
     </el-container>
   </el-container>
@@ -93,5 +97,13 @@ export default {
   }
   .el-main {
     background-color: #eaedf1;
+  }
+
+  .iconfont {
+    margin-right: 10px;
+  }
+
+  .el-menu {
+    border-right: none;
   }
 </style>
