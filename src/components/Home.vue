@@ -21,12 +21,12 @@
             active-text-color="#ffd04b">
             <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
               <template slot="title">
-                <i class="el-icon-location"></i>
+                <i :class="iconsObj[item.id]"></i>
                 <span>{{ item.authName }}</span>
               </template>
               <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
                 <template slot="title">
-                  <i class="el-icon-location"></i>
+                  <i class="el-icon-menu"></i>
                   <span>{{ subItem.authName }}</span>
                 </template>
               </el-menu-item>
@@ -42,6 +42,8 @@
 </template>
 
 <script>
+/* eslint-disable quote-props */
+
 export default {
   name: 'Home',
   created () {
@@ -49,7 +51,14 @@ export default {
   },
   data () {
     return {
-      menuList: []
+      menuList: [],
+      iconsObj: {
+        '125': 'iconfont icon-user',
+        '103': 'iconfont icon-tijikongjian',
+        '101': 'iconfont icon-shangpin',
+        '102': 'iconfont icon-danju',
+        '145': 'iconfont icon-baobiao'
+      }
     }
   },
   methods: {
