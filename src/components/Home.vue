@@ -1,6 +1,6 @@
 <template>
   <el-container class="home-container">
-    <!--      header -->
+    <!-- header nav -->
     <el-header>
       <div>
         <img src="" alt="">
@@ -8,33 +8,35 @@
       </div>
       <el-button class="logout-btn" type="info" @click="logout">Logout</el-button>
     </el-header>
+    <!-- header nav -->
     <!--      main container -->
     <el-container>
-<!--      aside -->
+      <!-- left side nav -->
       <el-aside width="200px">
-        <el-col :span="12">
           <el-menu
             default-active="2"
             class="el-menu-vertical-demo"
             background-color="#333744"
             text-color="#fff"
             active-text-color="#ffd04b">
-            <el-submenu index="1">
+            <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>{{ item.authName }}</span>
               </template>
-              <el-menu-item index="1-4-1">
+              <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
                 <template slot="title">
                   <i class="el-icon-location"></i>
-                  <span>导航二</span>
+                  <span>{{ subItem.authName }}</span>
                 </template>
               </el-menu-item>
             </el-submenu>
           </el-menu>
-        </el-col>
       </el-aside>
+      <!-- left side nav -->
+      <!-- right main content -->
       <el-main>Main</el-main>
+      <!-- right main content -->
     </el-container>
   </el-container>
 </template>
@@ -42,10 +44,23 @@
 <script>
 export default {
   name: 'Home',
+  created () {
+    this.getMenuList()
+  },
+  data () {
+    return {
+      menuList: []
+    }
+  },
   methods: {
     logout () {
       window.sessionStorage.clear()
       this.$router.push('/login')
+    },
+    async getMenuList () {
+      const { data: res } = await this.$http.get('menus')
+      this.menuList = res.data
+      console.log(res)
     }
   }
 }
