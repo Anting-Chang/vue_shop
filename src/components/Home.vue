@@ -26,12 +26,14 @@
                 <i :class="iconsObj[item.id]"></i>
                 <span>{{ item.authName }}</span>
               </template>
-              <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
+              <!-- second level menu -->
+              <el-menu-item :index="'/'+subItem.path+''" v-for="subItem in item.children" :key="subItem.id">
                 <template slot="title">
                   <i class="el-icon-menu"></i>
                   <span>{{ subItem.authName }}</span>
                 </template>
               </el-menu-item>
+              <!-- second level menu -->
             </el-submenu>
           </el-menu>
       </el-aside>
