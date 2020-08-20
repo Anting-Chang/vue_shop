@@ -16,7 +16,7 @@
           <el-menu
             router
             unique-opened
-            default-active="2"
+            :default-active="activePath"
             class="el-menu-vertical-demo"
             background-color="#333744"
             text-color="#fff"
@@ -27,7 +27,7 @@
                 <span>{{ item.authName }}</span>
               </template>
               <!-- second level menu -->
-              <el-menu-item :index="'/'+subItem.path+''" v-for="subItem in item.children" :key="subItem.id">
+              <el-menu-item :index="'/'+subItem.path+''" v-for="subItem in item.children" :key="subItem.id" @click="saveNavState('/'+subItem.path)">
                 <template slot="title">
                   <i class="el-icon-menu"></i>
                   <span>{{ subItem.authName }}</span>
@@ -54,6 +54,7 @@ export default {
   name: 'Home',
   created () {
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   data () {
     return {
@@ -64,7 +65,8 @@ export default {
         '101': 'iconfont icon-shangpin',
         '102': 'iconfont icon-danju',
         '145': 'iconfont icon-baobiao'
-      }
+      },
+      activePath: ''
     }
   },
   methods: {
@@ -76,6 +78,10 @@ export default {
       const { data: res } = await this.$http.get('menus')
       this.menuList = res.data
       console.log(res)
+    },
+    saveNavState (activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   }
 }
