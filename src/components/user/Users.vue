@@ -36,13 +36,11 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button
-                size="mini"
-                @click="editUser(scope.$index, scope.row)">编辑</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="deleteUser(scope.$index, scope.row)">删除</el-button>
+              <el-button size="mini" icon="el-icon-edit" type="primary" @click="editUser(scope.$index, scope.row)"></el-button>
+              <el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteUser(scope.$index, scope.row)"></el-button>
+              <el-tooltip class="item" effect="dark" content="Edit Role" :enterable="false" placement="top">
+                <el-button size="mini" icon="el-icon-share" type="warning" @click="editRole(scope.$index, scope.row)"></el-button>
+              </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
@@ -85,6 +83,9 @@ export default {
     },
     deleteUser (index, row) {
       console.log('delete user clicked', index, row)
+    },
+    editRole (index, row) {
+      console.log('edit role clicked', index, row)
     }
   }
 }
