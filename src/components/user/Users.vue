@@ -27,10 +27,7 @@
           <el-table-column prop="role_name" label="角色"></el-table-column>
           <el-table-column prop="mg_state" label="状态">
             <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.mg_state"
-                active-color="#13ce66"
-                inactive-color="#ff4949">
+              <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949" @change="userStateChange(scope.row)">
               </el-switch>
             </template>
           </el-table-column>
@@ -77,6 +74,30 @@ export default {
       this.userList = res.data.users
       this.total = res.data.total
       console.log(res)
+    },
+    userStateChange (userInfo) {
+      this.$confirm('This action will changed the status of this user', 'Notice', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(async () => {
+        const { data: res } = await this.$http.put(`users/${userInfo.id}/state/${userInfo.mg_state}`)
+        if (res.meta.status !== 200) {
+          userInfo.mg_state = !userInfo.mg_state
+          return this.$message({ type: 'error', message: 'Error happened, Please try again' })
+        }
+        this.$message({
+          type: 'success',
+          message: 'Successful'
+        })
+      }).catch(() => {
+        userInfo.mg_state = !userInfo.mg_state
+        this.$message({
+          type: 'info',
+          message: 'Edit Cancelled'
+        })
+      })
+      console.log(userInfo)
     },
     editUser (index, row) {
       console.log('edit user clicked', index, row)
