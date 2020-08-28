@@ -7,31 +7,29 @@
     </el-breadcrumb>
     <el-card>
       <el-row :gutter="20">
-        <el-col :span="6"
-          ><el-input placeholder="请输入内容">
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-            ></el-button> </el-input
-        ></el-col>
         <el-col :span="6">
-          <el-button type="primary">添加用户</el-button>
+          <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
+            <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
+          </el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-button type="primary" @click="dialogVisible = true">Create Account</el-button>
         </el-col>
         <el-table
           :data="userList"
           style="width: 100%">
           <el-table-column label="#" type="index"></el-table-column>
-          <el-table-column prop="username" label="姓名"></el-table-column>
-          <el-table-column prop="email" label="邮箱"></el-table-column>
-          <el-table-column prop="mobile" label="电话"></el-table-column>
-          <el-table-column prop="role_name" label="角色"></el-table-column>
-          <el-table-column prop="mg_state" label="状态">
+          <el-table-column prop="username" label="Name"></el-table-column>
+          <el-table-column prop="email" label="Email"></el-table-column>
+          <el-table-column prop="mobile" label="Tel"></el-table-column>
+          <el-table-column prop="role_name" label="Role"></el-table-column>
+          <el-table-column prop="mg_state" label="Status">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949" @change="userStateChange(scope.row)">
               </el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="Action">
             <template slot-scope="scope">
               <el-button size="mini" icon="el-icon-edit" type="primary" @click="editUser(scope.$index, scope.row)"></el-button>
               <el-button size="mini" icon="el-icon-delete" type="danger" @click="deleteUser(scope.$index, scope.row)"></el-button>
@@ -43,6 +41,14 @@
         </el-table>
       </el-row>
     </el-card>
+    <!-- Add user dialog -->
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -57,7 +63,8 @@ export default {
         pagesize: 2
       },
       userList: [],
-      total: ''
+      total: '',
+      dialogVisible: false
     }
   },
   created () {
@@ -98,6 +105,13 @@ export default {
         })
       })
       console.log(userInfo)
+    },
+    handleClose (done) {
+      // this.$confirm('确认关闭？')
+      //   .then(_ => {
+      done()
+      //   })
+      //   .catch(_ => {})
     },
     editUser (index, row) {
       console.log('edit user clicked', index, row)
