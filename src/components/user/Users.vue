@@ -42,11 +42,26 @@
       </el-row>
     </el-card>
     <!-- Add user dialog -->
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-      <span>这是一段信息</span>
+    <el-dialog title="Create Account" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+      <!-- Dialog main content -->
+      <el-form :model="createAccountForm" status-icon :rules="createAccountRules">
+        <el-form-item label="Username" prop="username">
+          <el-input v-model="createAccountForm.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <el-input v-model="createAccountForm.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model.number="createAccountForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Phone Number" prop="phoneNumber">
+          <el-input v-model="createAccountForm.phoneNumber" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- Dialog footer -->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
@@ -56,7 +71,45 @@
 export default {
   name: 'Users',
   data () {
+    // eslint-disable-next-line no-unused-vars
+    var email = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('年龄不能为空'))
+      }
+      console.log(value)
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error('请输入数字值'))
+        } else {
+          if (value < 18) {
+            callback(new Error('必须年满18岁'))
+          } else {
+            callback()
+          }
+        }
+      }, 1000)
+    }
     return {
+      createAccountForm: {
+        username: '',
+        password: '',
+        email: '',
+        phoneNumber: ''
+      },
+      createAccountRules: {
+        username: [
+          { required: true, message: 'Please enter a username', trigger: 'blur' },
+          { min: 3, max: 15, message: 'Username must have a length between 3 and 15', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: 'Please enter a password', trigger: 'blur' },
+          { min: 3, max: 10, message: 'Password must have a length between 3 and 10', trigger: 'blur' }
+        ],
+        email: [
+          { validator: email, trigger: 'blur' },
+          { required: true, message: 'Please enter a username', trigger: 'blur' }
+        ]
+      },
       queryInfo: {
         query: '',
         pagenum: 1,
