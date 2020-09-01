@@ -44,7 +44,7 @@
     <!-- Add user dialog -->
     <el-dialog title="Create Account" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
       <!-- Dialog main content -->
-      <el-form :model="createAccountForm" status-icon :rules="createAccountRules">
+      <el-form :model="createAccountForm" status-icon :rules="createAccountRules" ref="createAccountForm">
         <el-form-item label="Username" prop="username">
           <el-input v-model="createAccountForm.username" autocomplete="off"></el-input>
         </el-form-item>
@@ -61,7 +61,7 @@
       <!-- Dialog footer -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="addUser">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
@@ -70,24 +70,29 @@
 <script>
 export default {
   name: 'Users',
-  data () {
-    // eslint-disable-next-line no-unused-vars
-    var email = (rule, value, callback) => {
+  data: function () {
+    const email = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('年龄不能为空'))
+        return callback(new Error('Email is required'))
       }
-      console.log(value)
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error('请输入数字值'))
-        } else {
-          if (value < 18) {
-            callback(new Error('必须年满18岁'))
-          } else {
-            callback()
-          }
-        }
-      }, 1000)
+      const emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
+      const isValidEmail = emailReg.test(value)
+      if (isValidEmail) {
+        return callback()
+      } else {
+        return callback(new Error('Please enter a valid email address'))
+      }
+    }
+    const phoneNumber = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('Phone number is required'))
+      }
+      const phoneReg = /^[0-9]+$/
+      if (phoneReg.test(value)) {
+        return callback()
+      } else {
+        return callback(new Error('Please enter only numbers'))
+      }
     }
     return {
       createAccountForm: {
@@ -98,16 +103,42 @@ export default {
       },
       createAccountRules: {
         username: [
-          { required: true, message: 'Please enter a username', trigger: 'blur' },
-          { min: 3, max: 15, message: 'Username must have a length between 3 and 15', trigger: 'blur' }
+          {
+            required: true,
+            message: 'Please enter a username',
+            trigger: 'blur'
+          },
+          {
+            min: 3,
+            max: 15,
+            message: 'Username must have a length between 3 and 15',
+            trigger: 'blur'
+          }
         ],
         password: [
-          { required: true, message: 'Please enter a password', trigger: 'blur' },
-          { min: 3, max: 10, message: 'Password must have a length between 3 and 10', trigger: 'blur' }
+          {
+            required: true,
+            message: 'Please enter a password',
+            trigger: 'blur'
+          },
+          {
+            min: 3,
+            max: 10,
+            message: 'Password must have a length between 3 and 10',
+            trigger: 'blur'
+          }
         ],
         email: [
-          { validator: email, trigger: 'blur' },
-          { required: true, message: 'Please enter a username', trigger: 'blur' }
+          {
+            validator: email,
+            trigger: 'blur'
+          }
+        ],
+        phoneNumber: [
+          {
+            validator: phoneNumber,
+            trigger: 'blur'
+          }
         ]
       },
       queryInfo: {
@@ -165,6 +196,12 @@ export default {
       done()
       //   })
       //   .catch(_ => {})
+    },
+    addUser () {
+      this.$refs.createAccountForm.validate(valid => {
+        if (!valid) return
+        alert('submit')
+      })
     },
     editUser (index, row) {
       console.log('edit user clicked', index, row)
