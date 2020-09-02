@@ -42,7 +42,7 @@
       </el-row>
     </el-card>
     <!-- Add user dialog -->
-    <el-dialog title="Create Account" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog title="Create Account" :visible.sync="createAccountDialogVisible" width="30%" :before-close="handleClose">
       <!-- Dialog main content -->
       <el-form :model="createAccountForm" status-icon :rules="createAccountRules" ref="createAccountForm">
         <el-form-item label="Username" prop="username">
@@ -52,16 +52,36 @@
           <el-input v-model="createAccountForm.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="Email" prop="email">
-          <el-input v-model.number="createAccountForm.email" autocomplete="off"></el-input>
+          <el-input v-model="createAccountForm.email" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="Phone Number" prop="phoneNumber">
-          <el-input v-model="createAccountForm.phoneNumber" autocomplete="off"></el-input>
+        <el-form-item label="Phone Number" prop="mobile">
+          <el-input v-model="createAccountForm.mobile" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <!-- Dialog footer -->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button @click="createAccountDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="addUser">Confirm</el-button>
+      </span>
+    </el-dialog>
+    <!-- Edit user dialog -->
+    <el-dialog title="Edit Account" :visible.sync="editAccountDialogVisible" width="30%" :before-close="handleClose">
+      <!-- Dialog main content -->
+      <el-form :model="editAccountForm" status-icon :rules="editAccountRules" ref="editAccountForm">
+        <el-form-item label="Username">
+          <el-input v-model="editAccountName" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="editAccountForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Phone Number" prop="mobile">
+          <el-input v-model="editAccountForm.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- Dialog footer -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editAccountDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="submitEditUser">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
@@ -76,14 +96,13 @@ export default {
         return callback(new Error('Email is required'))
       }
       const emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
-      const isValidEmail = emailReg.test(value)
-      if (isValidEmail) {
+      if (emailReg.test(value)) {
         return callback()
       } else {
         return callback(new Error('Please enter a valid email address'))
       }
     }
-    const phoneNumber = (rule, value, callback) => {
+    const mobile = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('Phone number is required'))
       }
@@ -95,11 +114,33 @@ export default {
       }
     }
     return {
+      editAccountForm: {
+        email: '',
+        mobile: ''
+      },
+      editAccountName: '',
+      editAccountId: '',
       createAccountForm: {
         username: '',
         password: '',
         email: '',
-        phoneNumber: ''
+        mobile: ''
+      },
+      editAccountRules: {
+        email: [
+          {
+            validator: email,
+            required: true,
+            trigger: 'blur'
+          }
+        ],
+        mobile: [
+          {
+            validator: mobile,
+            required: true,
+            trigger: 'blur'
+          }
+        ]
       },
       createAccountRules: {
         username: [
@@ -131,12 +172,14 @@ export default {
         email: [
           {
             validator: email,
+            required: true,
             trigger: 'blur'
           }
         ],
-        phoneNumber: [
+        mobile: [
           {
-            validator: phoneNumber,
+            validator: mobile,
+            required: true,
             trigger: 'blur'
           }
         ]
@@ -144,11 +187,12 @@ export default {
       queryInfo: {
         query: '',
         pagenum: 1,
-        pagesize: 2
+        pagesize: 7
       },
       userList: [],
       total: '',
-      dialogVisible: false
+      createAccountDialogVisible: false,
+      editAccountDialogVisible: false
     }
   },
   created () {
@@ -198,13 +242,42 @@ export default {
       //   .catch(_ => {})
     },
     addUser () {
-      this.$refs.createAccountForm.validate(valid => {
+      this.$refs.createAccountForm.validate(async valid => {
         if (!valid) return
-        alert('submit')
+        const { data: res } = await this.$http.post('users', this.createAccountForm)
+        if (res.meta.status !== 201) {
+          this.$message.error('Create account failed!')
+        } else {
+          this.$message.success('Create account success!')
+          this.createAccountDialogVisible = false
+          this.getUserList()
+        }
       })
     },
-    editUser (index, row) {
-      console.log('edit user clicked', index, row)
+    async editUser (index, row) {
+      const { data: res } = await this.$http.get('users/' + row.id)
+      if (res.meta.status !== 200) {
+        this.$message.error('Fail to show account!')
+        return
+      }
+      this.editAccountName = res.data.username
+      this.editAccountForm.email = res.data.email
+      this.editAccountForm.mobile = res.data.mobile
+      this.editAccountId = res.data.id
+      this.editAccountDialogVisible = true
+    },
+    submitEditUser () {
+      this.$refs.editAccountForm.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.put('users/' + this.editAccountId, this.editAccountForm)
+        console.log(res.data)
+        if (res.meta.status !== 200) {
+          this.$message.error('Edit account failed!')
+          return
+        }
+        this.$message.success('Edit account success!')
+        this.editAccountDialogVisible = false
+      })
     },
     deleteUser (index, row) {
       console.log('delete user clicked', index, row)
