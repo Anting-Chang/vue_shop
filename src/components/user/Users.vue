@@ -280,7 +280,24 @@ export default {
       })
     },
     deleteUser (index, row) {
-      console.log('delete user clicked', index, row)
+      this.$confirm('This action will permanently delete this account!', 'Warning', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(async () => {
+        const { data: res } = await this.$http.delete('users/' + row.id)
+        if (res.meta.status !== 200) {
+          this.$message.error('Delete user failed!')
+          return
+        }
+        this.$message({
+          type: 'success',
+          message: 'Account successfully deleted.'
+        })
+        this.getUserList()
+      }).catch(() => {
+        this.$message.info('Delete cancelled.')
+      })
     },
     editRole (index, row) {
       console.log('edit role clicked', index, row)
