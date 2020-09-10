@@ -11,7 +11,8 @@ import {
   Row, Col,
   Table, TableColumn,
   Switch, Tooltip,
-  MessageBox, Dialog
+  MessageBox, Dialog,
+  Tag
 } from 'element-ui'
 
 Vue.use(Button)
@@ -36,6 +37,7 @@ Vue.use(Table)
 Vue.use(Switch)
 Vue.use(Tooltip)
 Vue.use(Dialog)
+Vue.use(Tag)
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
